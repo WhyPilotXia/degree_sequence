@@ -43,7 +43,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name:  ${{ github.ref_name }}  # 使用 git tag 的名字
+          tag_name: ${{ github.ref_name }}-${{ github.run_number }}
           release_name: Auto-built EXE 版本 - ${{ env.timestamp }}
           draft: false
           prerelease: false
