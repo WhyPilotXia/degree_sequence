@@ -28,14 +28,26 @@ jobs:
         run: |
           pyinstaller --noconfirm --onefile degree_sequence.py
 
+      - name: 获取当前时间戳并创建 Git 标签
+        id: get_timestamp
+        run: |
+          echo "timestamp=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      - name: 创建并推送 Git 标签
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag ${{ env.timestamp }}
+          git push origin refs/tags/${{ env.timestamp }}
+
       - name: 创建 GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}  # 使用 git tag 的名字
-          release_name: Auto-built EXE 版本
+          tag_name: ${{ env.timestamp }}  # 使用生成的时间戳作为标签名
+          release_name: Auto-built EXE 版本 - ${{ env.timestamp }}
           draft: false
           prerelease: false
 
@@ -46,6 +58,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, reference it with the output: `steps.<step_id>.outputs.<output_name>`
           asset_path: ./dist/degree_sequence.exe
-          asset_name: degree_sequence.exe
+          asset_name: degree_sequence_${{ env.timestamp }}.exe
           asset_content_type: application/x-msdownload
-        
