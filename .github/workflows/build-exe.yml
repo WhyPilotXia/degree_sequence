@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
       - name: 检出代码
         uses: actions/checkout@v3
@@ -26,11 +28,24 @@ jobs:
         run: |
           pyinstaller --noconfirm --onefile 图度序列.py
 
-      - name: 创建 GitHub Release 并上传 EXE
-        uses: softprops/action-gh-release@v1
+      - name: 创建 GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: auto-generated-release  # 可选：自动生成一个标签
+          tag_name: ${{ github.ref_name }}  # 使用 git tag 的名字
           release_name: Auto-built EXE 版本
           draft: false
           prerelease: false
-          files: dist/图度序列.exe
+
+      - name: 上传 Release 资产
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, reference it with the output: `steps.<step_id>.outputs.<output_name>`
+          asset_path: ./dist/图度序列.exe
+          asset_name: 图度序列.exe
+          asset_content_type: application/x-msdownload
+        
