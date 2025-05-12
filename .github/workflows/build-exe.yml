@@ -1,0 +1,33 @@
+name: Build Python to EXE
+
+on:
+  push:
+    branches:
+      - main   # 当推送到 main 分支时触发
+  workflow_dispatch:  # 允许手动运行
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+
+      - name: 设置 Python 环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: 安装依赖
+        run: |
+          pip install -r requirements.txt
+
+      - name: 使用 PyInstaller 打包为 EXE
+        run: |
+          pyinstaller --noconfirm --onefile 图度序列.py
+
+      - name: 上传生成的 EXE 文件
+        uses: actions/upload-artifact@v3
+        with:
+          name: degree_sequence_exe
+          path: dist/main.exe
