@@ -33,13 +33,6 @@ jobs:
         run: |
           echo "timestamp=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
 
-      - name: 创建并推送 Git 标签
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git tag "${{ env.timestamp }}"
-          git push origin "refs/tags/${{ env.timestamp }}"  # 注意这里引用了环境变量
-
       - name: 创建 GitHub Release
         id: create_release
         uses: actions/create-release@v1
@@ -58,5 +51,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, reference it with the output: `steps.<step_id>.outputs.<output_name>`
           asset_path: ./dist/degree_sequence.exe
-          asset_name: degree_sequence_${{ env.timestamp }}.exe
+          asset_name: degree_sequence.exe
           asset_content_type: application/x-msdownload
