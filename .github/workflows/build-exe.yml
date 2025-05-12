@@ -35,10 +35,10 @@ jobs:
 
       - name: 创建并推送 Git 标签
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git tag ${{ env.timestamp }}
-          git push origin refs/tags/${{ env.timestamp }}
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag "${{ env.timestamp }}"
+          git push origin "refs/tags/${{ env.timestamp }}"  # 注意这里引用了环境变量
 
       - name: 创建 GitHub Release
         id: create_release
