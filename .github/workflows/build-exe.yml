@@ -26,15 +26,26 @@ jobs:
 
       - name: 使用 PyInstaller 打包为 EXE
         run: |
-          pyinstaller --noconfirm --onefile 图度序列.py
+          pyinstaller --noconfirm --onefile degree_sequence.py
 
-      - name: 创建 GitHub Release 并上传 EXE
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: 创建 GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          name: Auto-built EXE 版本
-          tag_name: auto-generated-release
+          tag_name: ${{ github.ref_name }}  # 使用 git tag 的名字
+          release_name: Auto-built EXE 版本
           draft: false
           prerelease: false
-          files: dist/图度序列.exe
+
+      - name: 上传 Release 资产
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, reference it with the output: `steps.<step_id>.outputs.<output_name>`
+          asset_path: ./dist/degree_sequence.exe
+          asset_name: degree_sequence.exe
+          asset_content_type: application/x-msdownload
         
