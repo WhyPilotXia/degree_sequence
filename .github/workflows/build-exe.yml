@@ -31,7 +31,7 @@ jobs:
       - name: 获取当前时间戳
         id: get_timestamp
         run: |
-          echo "timestamp=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+          echo "timestamp=$(date)" >> $GITHUB_ENV
 
       - name: 打印时间戳进行调试
         run: |
