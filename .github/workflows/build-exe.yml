@@ -1,10 +1,10 @@
-name: Build Python to EXE
+name: Build Python to EXE and Create GitHub Release
 
 on:
   push:
     branches:
-      - main   # 当推送到 main 分支时触发
-  workflow_dispatch:  # 允许手动运行
+      - main   # 推送到 main 分支时触发
+  workflow_dispatch:  # 支持手动运行
 
 jobs:
   build:
@@ -26,14 +26,11 @@ jobs:
         run: |
           pyinstaller --noconfirm --onefile 图度序列.py
 
-      - name: 上传生成的 EXE 文件
-        uses: actions/upload-artifact@v3
-        with:
-          name: degree_sequence_exe
-          path: dist/main.exe
-
       - name: 创建 GitHub Release 并上传 EXE
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: dist/main.exe
+          tag_name: auto-generated-release  # 可选：自动生成一个标签
+          release_name: Auto-built EXE 版本
+          draft: false
+          prerelease: false
+          files: dist/图度序列.exe
